@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js" 
+}
+
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Insurance {
+  id                Int      @id @default(autoincrement())
+  buyerName         String
+  mobileNumber      String
+  buyerType         String
+  insuranceCategory String
+  source            String
+  status            String
+  followUp          String
+  assignTo          String
+  comment           String
+
+  email             String
+  address           String
+  city              String
+  pin               String   
+  gender            String
+  maritalStatus     String
+  dob               String   
+  occupation        String
+  annualIncome      String
+  pan               String
+  adhar             String
+  gst               String
+
+  nomineeName       String
+  nomineeAge        String   
+  nomineeRelation   String
+  referenceName     String
+  referenceNumber   String
+
+  registerNumber    String
+  make              String
+  model             String
+  variant           String
+  engineNumber      String
+  chassiNumber      String
+  makeMonthYear     String
+  registerMonthYear String
+
+  insuranceCompany  String
+  branch            String
+  policyType        String
+  policyNumber      String
+  issueDate         String   
+  dueDate           String   
+  ncbDiscount       String
+
+  insurer           String
+  premium           String
+  coverage          String
+  ncb               String
+  features          String
+
+  newInsuranceCompany  String
+  newBranch            String
+  newPolicyType        String
+  newPolicyNumber      String
+  newIssueDate         String   
+  newDueDate           String   
+  newNcbDiscount       String
+
+  createdAt         DateTime @default(now())
+}
