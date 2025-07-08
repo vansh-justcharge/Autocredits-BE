@@ -1,13 +1,17 @@
 const express = require('express');
+const cors = require('cors');
 const dotenv = require('dotenv');
 const insuranceRoutes = require('./routes/insuranceRoutes');
+const quoteRoutes = require('./routes/quoteRoutes');
 
 dotenv.config();
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.use('/api/insurance', insuranceRoutes);
+app.use('/api/quote', quoteRoutes);
 
 app.get('/', (req, res) => {
   res.send('Server is working!');

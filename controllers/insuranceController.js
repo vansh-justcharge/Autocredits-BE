@@ -3,16 +3,20 @@ const prisma =require('../config/db');
 // Create 
 exports.createInsurance = async (req, res) => {
   try {
-    if (!req.body.buyerName || !req.body.mobileNumber) {
+    const { buyerName, mobileNumber } = req.body;
+
+    if (!buyerName || !mobileNumber) {
       return res.status(400).json({ error: "Missing required fields: buyerName and mobileNumber are required." });
     }
+
     const insurance = await prisma.insurance.create({
-      data: req.body
+      data: req.body,
     });
 
     res.status(201).json(insurance);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Create Insurance Error:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
