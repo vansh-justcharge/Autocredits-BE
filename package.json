@@ -12,9 +12,13 @@
   "type": "commonjs",
   "dependencies": {
     "@prisma/client": "^6.11.1",
+    "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "dotenv": "^17.0.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "multer": "^2.0.1",
+    "pdfkit": "^0.17.1",
+    "streamifier": "^0.1.1"
   },
   "devDependencies": {
     "prisma": "^6.11.1"

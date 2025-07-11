@@ -1,68 +1,119 @@
-const prisma =require('../config/db');
+const cloudinary = require('../cloudinary/cloudinary'); 
+const PDFDocument = require('pdfkit'); 
+const streamifier = require('streamifier'); 
+const prisma = require('../config/db');
 
-exports.createQuote=async(req,res)=>{
-    try{
-        const quote=await prisma.quote.create({
-            data:req.body,
-        });
+// CREATE QUOTE
+exports.createQuote = async (req, res) => {
+  try {
+    const {
+      insurer,
+      premium,
+      coverage,
+      ncb,
+      quoteInsuranceDuration,
+      quoteIDV,
+      quoteTotalPremium,
+      features,
+    } = req.body;
 
-        res.status(201).json(quote);
+    // 1. Generate PDF
+    const doc = new PDFDocument();
+    let buffers = [];
 
-    }
-    catch(error){
-        console.error("Create Quote Error:", error);
-        res.status(500).json({ error: error.message });
-    }
-}
+    doc.on('data', buffers.push.bind(buffers));
+    doc.on('end', async () => {
+      const pdfBuffer = Buffer.concat(buffers);
 
+      // 2. Upload PDF to Cloudinary
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { resource_type: 'raw', folder: 'quotes_pdfs' },
+        async (error, result) => {
+          if (error) {
+            return res.status(500).json({ error: 'Cloudinary upload failed' });
+          }
+
+          // 3. Save quote with PDF URL
+          const quote = await prisma.quote.create({
+            data: {
+              insurer,
+              premium,
+              coverage,
+              ncb,
+              quoteInsuranceDuration,
+              quoteIDV,
+              quoteTotalPremium,
+              features,
+              pdfUrl: result.secure_url,
+            },
+          });
+
+          res.status(201).json(quote);
+        }
+      );
+
+      streamifier.createReadStream(pdfBuffer).pipe(uploadStream);
+    });
+
+    // PDF content
+    doc.fontSize(16).text(`Insurance Quote`, { align: 'center' });
+    doc.moveDown();
+    doc.text(`Insurer: ${insurer}`);
+    doc.text(`Premium: ${premium}`);
+    doc.text(`Coverage: ${coverage}`);
+    doc.text(`NCB: ${ncb}`);
+    doc.text(`Duration: ${quoteInsuranceDuration}`);
+    doc.text(`IDV: ${quoteIDV}`);
+    doc.text(`Total Premium: ${quoteTotalPremium}`);
+    doc.moveDown();
+    doc.text(`Features:`);
+    features?.forEach((f, i) => doc.text(`  ${i + 1}. ${f}`));
+    doc.end();
+  } catch (error) {
+    console.error('Create Quote Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ✅ ADD THESE TO FIX YOUR ERROR
 exports.getAllQuote = async (req, res) => {
   try {
-    const quote = await prisma.quote.findMany();
-    res.json(quote);
+    const quotes = await prisma.quote.findMany();
+    res.status(200).json(quotes);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 exports.getQuoteById = async (req, res) => {
-  const { id } = req.params;
   try {
-    const quote = await prisma.quote.findUnique({
-      where: { id: parseInt(id) },
-    });
-    if (!quote) {
-      return res.status(404).json({ error: 'Insurance not found' });
-    }
-    res.json(quote);
+    const id = parseInt(req.params.id);
+    const quote = await prisma.quote.findUnique({ where: { id } });
+    res.status(200).json(quote);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// update 
 exports.updateQuote = async (req, res) => {
-  const { id } = req.params;
   try {
-    const quote = await prisma.quote.update({
-      where: { id: parseInt(id) },
+    const id = parseInt(req.params.id);
+    const updated = await prisma.quote.update({
+      where: { id },
       data: req.body,
     });
-    res.json(quote);
+    res.status(200).json(updated);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// delete 
 exports.deleteQuote = async (req, res) => {
-  const { id } = req.params;
   try {
-    await prisma.quote.delete({
-      where: { id: parseInt(id) },
-    });
-    res.json({ message: 'Insurance deleted successfully' });
+    const id = parseInt(req.params.id);
+    await prisma.quote.delete({ where: { id } });
+    res.status(204).send();
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };

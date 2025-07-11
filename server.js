@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const insuranceRoutes = require('./routes/insuranceRoutes');
 const quoteRoutes = require('./routes/quoteRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 
 app.use('/api/insurance', insuranceRoutes);
 app.use('/api/quote', quoteRoutes);
+app.use('/api/upload', uploadRoutes);
 
 app.get('/', (req, res) => {
   res.send('Server is working!');
