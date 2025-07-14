@@ -5,76 +5,123 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js" 
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
-
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+
 model Insurance {
-  id                Int      @id @default(autoincrement())
-  buyerName         String
-  mobileNumber      String
-  buyerType         String
-  insuranceCategory String
-  source            String
-  status            String
-  followUp          String
-  assignTo          String
-  comment           String
-
-  email             String
-  address           String
-  city              String
-  pin               String   
-  gender            String
-  maritalStatus     String
-  dob               String   
-  occupation        String
-  annualIncome      String
-  pan               String
-  adhar             String
-  gst               String
-
-  nomineeName       String
-  nomineeAge        String   
-  nomineeRelation   String
-  referenceName     String
-  referenceNumber   String
-
-  registerNumber    String
-  make              String
-  model             String
-  variant           String
-  engineNumber      String
-  chassiNumber      String
-  makeMonthYear     String
-  registerMonthYear String
-
-  insuranceCompany  String
-  branch            String
-  policyType        String
-  policyNumber      String
-  issueDate         String   
-  dueDate           String   
-  ncbDiscount       String
-
-  insurer           String
-  premium           String
-  coverage          String
-  ncb               String
-  features          String
-
-  newInsuranceCompany  String
-  newBranch            String
-  newPolicyType        String
-  newPolicyNumber      String
-  newIssueDate         String   
-  newDueDate           String   
-  newNcbDiscount       String
-
-  createdAt         DateTime @default(now())
+  id                      Int      @id @default(autoincrement())
+  leadId                  Int?     
+  lead                    Lead?    @relation(fields: [leadId], references: [id])
+  buyerName              String
+  mobileNumber           String
+  buyerType              String  @default("Individual")
+  insuranceCategory      String
+  source                 String
+  status                 String
+  followUp               String
+  assignTo               String
+  caseComment            String
+  email                  String
+  address                String
+  city                   String
+  pin                    String
+  gender                 String  @default("Male")
+  maritalStatus          String  @default("Single")
+  dob                    String
+  occupation             String
+  annualIncome           String
+  pan                    String
+  adhar                  String
+  gst                    String
+  nomineeName            String
+  nomineeAge             String
+  nomineeRelation        String
+  nomineeReferenceName   String
+  nomineeReferenceNumber String
+  registerNumber         String
+  make                   String
+  model                  String
+  variant                String
+  engineNumber           String
+  chassiNumber           String
+  makeMonthYear          String
+  registerMonthYear      String
+  inspectionStatus       String
+  inspectionReferenceNo  String
+  inseptionComment       String
+  insuranceCompany       String
+  branch                 String
+  policyType             String
+  policyNumber           String
+  issueDate              String
+  dueDate                String
+  ncbDiscount            String
+  claimLastYear          String
+  insurer                String
+  premium                String
+  coverage               String
+  ncb                    String
+  quoteInsuranceDuration String
+  quoteIDV               String
+  quoteTotalPremium      String
+  features               String[]
+  policyIssued           String
+  newInsuranceCompany    String
+  newBranch              String
+  newPolicyType          String
+  newPolicyNumber        String
+  newIssueDate           String
+  newDueDate             String
+  newNcbDiscount         String
+  newInsuranceDuration   String
+  idv                    String
+  NewTotalPremium        String
+  paymentAmount          String
+  paymentDate            String
+  receiptNumber          String
+  receiptDate            String
+  bankName               String
+  paymentMode            String
+  documentUrls           String[]
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 }
+
+model Quote {
+  id                      Int      @id @default(autoincrement())
+  insurer                String
+  premium                String
+  coverage               String
+  ncb                    String
+  quoteInsuranceDuration String
+  quoteIDV               String
+  quoteTotalPremium      String
+  features               String[]
+  pdfUrl                 String   
+
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model Lead {
+  id              Int          @id @default(autoincrement())
+  firstName       String
+  lastName        String
+  email           String
+  phone           String
+  source          String       @default("reference")
+  service         String
+  status          String       @default("new")
+  assignedTo      String
+  lastContact     String
+  additionalDetails String
+  insurances      Insurance[]
+}
+
