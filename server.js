@@ -9,7 +9,17 @@ const leadRoutes = require('./routes/leadRoutes');
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  process.env.PROD_CLIENT_URL,
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+}));
+
 app.use(express.json());
 
 app.use('/api/insurance', insuranceRoutes);
