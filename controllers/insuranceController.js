@@ -3,14 +3,25 @@ const prisma =require('../config/db');
 // Create 
 exports.createInsurance = async (req, res) => {
   try {
-    const { buyerName, mobileNumber } = req.body;
+    const { buyerName, mobileNumber, leadId, ...rest } = req.body;
 
     if (!buyerName || !mobileNumber) {
       return res.status(400).json({ error: "Missing required fields: buyerName and mobileNumber are required." });
     }
 
     const insurance = await prisma.insurance.create({
-      data: req.body,
+      data: {
+        buyerName,
+        mobileNumber,
+        ...rest,
+        ...(leadId && {
+          lead: {
+            connect: {
+              id: parseInt(leadId),
+            },
+          },
+        }),
+      },
     });
 
     res.status(201).json(insurance);
@@ -21,15 +32,21 @@ exports.createInsurance = async (req, res) => {
 };
 
 
+
 // get 
 exports.getAllInsurances = async (req, res) => {
   try {
-    const insurances = await prisma.insurance.findMany();
+    const insurances = await prisma.insurance.findMany({
+      include: {
+        lead: true,
+      },
+    });
     res.json(insurances);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // get by id 
 exports.getInsuranceById = async (req, res) => {
@@ -37,15 +54,21 @@ exports.getInsuranceById = async (req, res) => {
   try {
     const insurance = await prisma.insurance.findUnique({
       where: { id: parseInt(id) },
+      include: {
+        lead: true,
+      },
     });
+
     if (!insurance) {
       return res.status(404).json({ error: 'Insurance not found' });
     }
+
     res.json(insurance);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // update 
 exports.updateInsurance = async (req, res) => {

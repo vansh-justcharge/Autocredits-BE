@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const insuranceRoutes = require('./routes/insuranceRoutes');
 const quoteRoutes = require('./routes/quoteRoutes');
 const uploadRoutes = require('./routes/uploadRoutes');
+const leadRoutes = require('./routes/leadRoutes');
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/api/insurance', insuranceRoutes);
 app.use('/api/quote', quoteRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/leads', leadRoutes);
 
 app.get('/', (req, res) => {
   res.send('Server is working!');
