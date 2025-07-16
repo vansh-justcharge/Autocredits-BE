@@ -12,8 +12,8 @@ const app = express();
 
 // Allowed origins from environment or fallback
 const allowedOrigins = [
-  process.env.CLIENT_URL || 'http://localhost:5173',
-  process.env.PROD_CLIENT_URL || 'https://autocredits-ui.vercel.app'
+  process.env.CLIENT_URL ,
+  process.env.PROD_CLIENT_URL 
 ];
 
 // Dynamic origin checker for CORS
