@@ -10,24 +10,8 @@ dotenv.config();
 
 const app = express();
 
-// Allowed origins from environment or fallback
-const allowedOrigins = [
-  process.env.CLIENT_URL ,
-  process.env.PROD_CLIENT_URL,
-  "*"
-];
 
-// Dynamic origin checker for CORS
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`Not allowed by CORS: ${origin}`));
-    }
-  },
-  credentials: true,
-}));
+app.use(cors({ origin: "*" }));
 
 app.use(express.json());
 
