@@ -39,7 +39,7 @@ model Insurance {
   annualIncome           String
   pan                    String
   adhar                  String
-  gst                    String
+  gst                    String?
   nomineeName            String
   nomineeAge             String
   nomineeRelation        String
@@ -87,7 +87,7 @@ model Insurance {
   paymentDate            String
   receiptNumber          String
   receiptDate            String
-  bankName               String
+  bankName               String?
   paymentMode            String
   documentUrls           String[]
   createdAt              DateTime @default(now())
